@@ -3,6 +3,8 @@ version: "2"
 services:
   voting-app:
     build: ./voting-app/.
+    logging: &log_config
+      driver: ${COMPOSE_LOG_DRIVER}
     volumes:
      - ./voting-app:/app
     ports:
@@ -15,6 +17,7 @@ services:
 
   result-app:
     build: ./result-app/.
+    logging: *log_config
     volumes:
       - ./result-app:/app
     ports:
@@ -27,6 +30,7 @@ services:
 
   worker:
     build: ./worker
+    logging: *log_config
     links:
       - db
       - redis
@@ -34,12 +38,14 @@ services:
       - back-tier
 
   redis:
+    logging: *log_config
     image: redis
     ports: ["6379"]
     networks:
       - back-tier
 
   db:
+    logging: *log_config
     image: postgres:9.4
     volumes:
       - "db-data:/var/lib/postgresql/data"
